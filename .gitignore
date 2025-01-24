@@ -2,4 +2,4 @@
 *.pyc
 dist
 build
-
+.vscode

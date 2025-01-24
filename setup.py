@@ -3,9 +3,9 @@
 
 import sys
 import subprocess
-import pkg_resources
+from setuptools import setup, find_packages
 
-# Make sure setuptools is installed. If not, try to install it automatically
+# Check if setuptools is installed and upgrade if necessary
 try:
     import setuptools
 except ImportError:
@@ -15,36 +15,41 @@ except ImportError:
 # Function to check if a package is already installed
 def is_package_installed(package_name):
     try:
+        import pkg_resources
         pkg_resources.get_distribution(package_name)
         return True
     except pkg_resources.DistributionNotFound:
         return False
 
-# Define the package name to be installed
+# Define the package name
 package_name = "dj-shortwalk"
 
 # Check if the package is already installed
 if is_package_installed(package_name):
     print(f"The package '{package_name}' is already installed.")
-    
-    # Exit the script if the package is already installed to avoid reinstalling
     sys.exit(0)
 
-# Import setup function to continue with the package installation
-from setuptools import setup
-
 # Read the content of the README file for long description
-readme = open('README.rst').read()
+readme = ''
+try:
+    with open('README.rst', 'r', encoding='utf-8') as f:
+        readme = f.read()
+except FileNotFoundError:
+    print("Warning: README.rst not found. Skipping long description.")
+
+version = '1.0'
 
 # Run the setup function to install the package
 setup(
     name='dj-shortwalk',
-    version='1.0',
-    description="For Irritated Django developers who types 'python manage.py' too many times...",
+    version=version,
+    description="For irritated Django developers who type 'python manage.py' too many times...",
     long_description=readme,
+    long_description_content_type='text/x-rst',
     author="Mr. Bipin Rajesh Tatkare",
     author_email="techbipinrt2526@gmail.com",
-    url="http://github.com/techbipin/dj-shortwalk",
+    url="https://github.com/techbipin/dj-shortwalk",
+    packages=find_packages(where="dj_shortwalk"),
     py_modules=['dj_shortwalk'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -52,11 +57,14 @@ setup(
         'Natural Language :: English',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.12'
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.12',
+        'Operating System :: OS Independent',
     ],
     entry_points={
         'console_scripts': [
-            'dj = dj_shortwalk:main',
-        ]
+            'dj-shortwalk = dj_shortwalk.dj_shortwalk.main',
+        ],
     },
+    python_requires='>=3.12',
 )
